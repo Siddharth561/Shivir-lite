@@ -7,5 +7,9 @@ class Conflict(APIException):
     default_code = 'conflict'
 
 
+DuplicateRegistrationError = Conflict
+
+
 def bad_request(message):
     return ValidationError({'detail': message})
+

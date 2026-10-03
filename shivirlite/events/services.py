@@ -42,7 +42,25 @@ def register_participant(event,full_name,email,phone):
             status=Registration.Status.CONFIRMED,
             amount_paid=event.fee,
         )
+    except IntegrityError:
+        raise DuplicateRegistrationError()
+
     return registration
+
+
+def register_for_event(event_id, participant_data):
+    try:
+        event = Event.objects.get(pk=event_id)
+    except Event.DoesNotExist:
+        from rest_framework.exceptions import NotFound
+        raise NotFound('Event not found.')
+    return register_participant(
+        event=event,
+        full_name=participant_data['full_name'],
+        email=participant_data['email'],
+        phone=participant_data['phone'],
+    )
+
 
 
 def transfer_registration(registration_id, target_event_id):
