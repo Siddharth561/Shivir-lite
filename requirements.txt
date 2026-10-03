@@ -1,0 +1,8 @@
+Django>=5.1,<6.0
+djangorestframework>=3.15.0
+django-filter>=24.0
+phonenumbers>=8.13.0
+dj-database-url>=2.2.0
+pytest>=8.0
+pytest-django>=4.8
+psycopg[binary]>=3.1.0
