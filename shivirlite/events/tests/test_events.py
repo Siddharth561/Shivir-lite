@@ -1,5 +1,6 @@
 from datetime import date
 from decimal import Decimal
+import uuid
 
 import pytest
 from rest_framework import status
@@ -19,9 +20,9 @@ class TestEventList:
         response = regular_client.get('/api/events/')
         assert response.status_code == status.HTTP_200_OK
         data = response.data.get('results', response.data)
-        ids = [item['id'] for item in data]
-        assert sample_published_event.id in ids
-        assert sample_unpublished_event.id not in ids
+        ids = [str(item['id']) for item in data]
+        assert str(sample_published_event.id) in ids
+        assert str(sample_unpublished_event.id) not in ids
 
     def test_get_list_staff_sees_all(
         self, staff_client, sample_published_event, sample_unpublished_event
@@ -29,9 +30,9 @@ class TestEventList:
         response = staff_client.get('/api/events/')
         assert response.status_code == status.HTTP_200_OK
         data = response.data.get('results', response.data)
-        ids = [item['id'] for item in data]
-        assert sample_published_event.id in ids
-        assert sample_unpublished_event.id in ids
+        ids = [str(item['id']) for item in data]
+        assert str(sample_published_event.id) in ids
+        assert str(sample_unpublished_event.id) in ids
 
     def test_filter_is_published_true(
         self, staff_client, sample_published_event, sample_unpublished_event
@@ -40,9 +41,9 @@ class TestEventList:
         assert response.status_code == status.HTTP_200_OK
         data = response.data.get('results', response.data)
         assert all(item['is_published'] is True for item in data)
-        ids = [item['id'] for item in data]
-        assert sample_published_event.id in ids
-        assert sample_unpublished_event.id not in ids
+        ids = [str(item['id']) for item in data]
+        assert str(sample_published_event.id) in ids
+        assert str(sample_unpublished_event.id) not in ids
 
     def test_filter_is_published_false(
         self, staff_client, sample_published_event, sample_unpublished_event
@@ -51,9 +52,9 @@ class TestEventList:
         assert response.status_code == status.HTTP_200_OK
         data = response.data.get('results', response.data)
         assert all(item['is_published'] is False for item in data)
-        ids = [item['id'] for item in data]
-        assert sample_unpublished_event.id in ids
-        assert sample_published_event.id not in ids
+        ids = [str(item['id']) for item in data]
+        assert str(sample_unpublished_event.id) in ids
+        assert str(sample_published_event.id) not in ids
 
     def test_filter_is_published_invalid(self, staff_client):
         response = staff_client.get('/api/events/?is_published=maybe')
@@ -79,9 +80,9 @@ class TestEventList:
         response = staff_client.get('/api/events/?start_date_after=2026-11-01')
         assert response.status_code == status.HTTP_200_OK
         data = response.data.get('results', response.data)
-        ids = [item['id'] for item in data]
-        assert e2.id in ids
-        assert e1.id not in ids
+        ids = [str(item['id']) for item in data]
+        assert str(e2.id) in ids
+        assert str(e1.id) not in ids
 
     def test_filter_start_date_after_invalid(self, staff_client):
         response = staff_client.get('/api/events/?start_date_after=not-a-date')
@@ -177,7 +178,7 @@ class TestEventDetail:
     ):
         response = regular_client.get(f'/api/events/{sample_published_event.id}/')
         assert response.status_code == status.HTTP_200_OK
-        assert response.data['id'] == sample_published_event.id
+        assert str(response.data['id']) == str(sample_published_event.id)
 
     def test_retrieve_unpublished_event_regular_404(
         self, regular_client, sample_unpublished_event
@@ -192,7 +193,7 @@ class TestEventDetail:
         assert response.status_code == status.HTTP_200_OK
 
     def test_retrieve_non_existing_event_404(self, staff_client):
-        random_id = 999999
+        random_id = uuid.uuid4()
         response = staff_client.get(f'/api/events/{random_id}/')
         assert response.status_code == status.HTTP_404_NOT_FOUND
 

@@ -1,5 +1,6 @@
 from datetime import date
 from decimal import Decimal
+import uuid
 
 import pytest
 from rest_framework import status
@@ -165,7 +166,7 @@ class TestAttendance:
     def test_attendance_unknown_registration_id_skipped(
         self, staff_client, multi_day_event
     ):
-        fake_id = 999999
+        fake_id = uuid.uuid4()
         payload = {
             'registration_ids': [fake_id],
             'date': '2026-11-10',

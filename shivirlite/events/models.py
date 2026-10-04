@@ -1,4 +1,5 @@
 from decimal import Decimal
+import uuid
 
 from django.conf import settings
 from django.db import models
@@ -6,6 +7,7 @@ from django.utils import timezone
 
 
 class Participant(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     full_name = models.CharField(max_length=255)
     email = models.EmailField(db_index=True)
     phone = models.CharField(max_length=16, unique=True)
@@ -23,6 +25,7 @@ class Participant(models.Model):
 
 
 class Event(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
     start_date = models.DateField()
     end_date = models.DateField()
@@ -54,6 +57,7 @@ class Registration(models.Model):
         CONFIRMED = 'CONFIRMED', 'Confirmed'
         CANCELLED = 'CANCELLED', 'Cancelled'
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     participant = models.ForeignKey(
         Participant,
         on_delete=models.PROTECT,
@@ -88,6 +92,7 @@ class Registration(models.Model):
 
 
 class Attendance(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     registration = models.ForeignKey(
         Registration,
         on_delete=models.CASCADE,

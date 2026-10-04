@@ -86,7 +86,7 @@ RegistrationSerializer = RegistrationPublicSerializer
 
 class AttendanceRequestSerializer(serializers.Serializer):
     registration_ids = serializers.ListField(
-        child=serializers.IntegerField(),
+        child=serializers.UUIDField(),
         allow_empty=False,
     )
     date = serializers.DateField()
@@ -137,8 +137,8 @@ class EventSummarySerializer(serializers.Serializer):
 
 
 class RegistrationTransferSerializer(serializers.Serializer):
-    target_event_id = serializers.IntegerField(required=False)
-    event_id = serializers.IntegerField(required=False)
+    target_event_id = serializers.UUIDField(required=False)
+    event_id = serializers.UUIDField(required=False)
 
     def validate(self, attrs):
         target_id = attrs.get('target_event_id') or attrs.get('event_id')
